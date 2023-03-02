@@ -1,16 +1,25 @@
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import './index.css';
+
+// React is based on components
+// Every custome-made componet class inherits from React.Component class
+
 class Square extends React.Component {
   render() {
     return (
       <button className="square">
-        {/* TODO */}
+        {this.props.value}
       </button>
+      // this.props.value is how a prop is called
     );
   }
 }
 
 class Board extends React.Component {
   renderSquare(i) {
-    return <Square />;
+    // "value" is what's called a "prop" (property)
+    return <Square value={i}/>; // <Square /> refers to the Square class declared above
   }
 
   render() {
