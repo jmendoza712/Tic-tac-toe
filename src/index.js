@@ -6,12 +6,23 @@ import './index.css';
 // Every custome-made componet class inherits from React.Component class
 
 class Square extends React.Component {
+  // Equivalent to Ruby's Initialize method. It's used for declaring a component "state"
+  constructor(props) {
+    super(props); // All JS classes' constructor should start with this line -> Inheritance
+    this.state = {
+      value: null,
+    };
+  }
+
   render() {
     return (
-      <button className="square">
-        {this.props.value}
+      // Function syntax inside onClick is called Arrow Function. The function will record a click when it happens ("reacting")
+      <button
+      className="square"
+      onClick={ () => this.setState({ value: 'X' }) } // this.setState is setting the value of "value"
+      >
+        {this.state.value} {/* this.state.value is how a component state is called */}
       </button>
-      // this.props.value is how a prop is called
     );
   }
 }
