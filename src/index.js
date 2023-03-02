@@ -16,7 +16,7 @@ class Square extends React.Component {
 
   render() {
     return (
-      // Function syntax inside onClick is called Arrow Function. The function will record a click when it happens ("reacting")
+      // Function syntax inside onClick is called Arrow Function.
       <button
       className="square"
       onClick={ () => this.setState({ value: 'X' }) } // this.setState is setting the value of "value"
