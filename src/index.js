@@ -6,18 +6,16 @@ import './index.css';
 // Every custome-made componet class inherits from React.Component class
 
 // Square is only responsible for displaying the state stablished by Board.
-class Square extends React.Component {
-  render() {
-    return (
-      // Function syntax inside onClick is called Arrow Function.
-      <button
+// Function components are a simpler way to write components that only contain a render method and don’t have their own state.
+function Square(props) {
+  return (
+    <button
       className="square"
-      onClick={ () => this.props.onClick() } // Will tell Board when Square is clicked. This is an "event listener"
+      onClick={ props.onClick } // Will tell Board when Square is clicked. This is an "event listener"
       >
         {this.props.value} {/* Will display the "value" prop passed when Square is rendered */}
       </button>
-    );
-  }
+  );
 }
 
 // Board handles the state of each Square in order to determine a winner.
