@@ -13,19 +13,21 @@ function Square(props) {
       className="square"
       onClick={ props.onClick } // Will tell Board when Square is clicked. This is an "event listener"
       >
-        {this.props.value} {/* Will display the "value" prop passed when Square is rendered */}
+        {props.value} {/* Will display the "value" prop passed when Square is rendered */}
       </button>
   );
 }
 
 // Board handles the state of each Square in order to determine a winner.
 class Board extends React.Component {
+
   // Equivalent to Ruby's Initialize method. It's used for pre-setting a component "state"
   // This will set the state of the game by telling each Square its own state (null, X or O)
   constructor(props) {
     super(props);
     this.state = {
-      squares: Array(9).fill(null)
+      squares: Array(9).fill(null),
+      xIsNext: true, // Flag to determine which player goes next
     }
   }
 
@@ -33,8 +35,11 @@ class Board extends React.Component {
   // Will update this.state.squares[i] where "i" is the Square that was clicked
   handleClick(i) {
     const squares = this.state.squares.slice(); // .Slice creates a "private" copy of this.state.square ("Immutability")
-    squares[i] = 'X';
-    this.setState({ squares: squares }); // Replace the existing value of this.state.square
+    squares[i] = this.state.xIsNext ? 'X' : 'O';
+    this.setState({
+      squares: squares, // Replace the existing value of this.state.square
+      xIsNext: !this.state.xIsNext, // Change the flag's value
+    });
     // console.log (this.state.squares)
   }
 
@@ -50,7 +55,7 @@ class Board extends React.Component {
   }
 
   render() {
-    const status = 'Next player: X';
+    const status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
 
     return (
       <div>
