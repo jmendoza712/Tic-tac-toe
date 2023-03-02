@@ -5,9 +5,8 @@ import './index.css';
 // React is based on components
 // Every custome-made componet class inherits from React.Component class
 
+// Square is only responsible for displaying the state stablished by Board.
 class Square extends React.Component {
-  // Constructor is gone since Square no longer keeps track of its own state
-
   render() {
     return (
       // Function syntax inside onClick is called Arrow Function.
@@ -21,6 +20,7 @@ class Square extends React.Component {
   }
 }
 
+// Board handles the state of each Square in order to determine a winner.
 class Board extends React.Component {
   // Equivalent to Ruby's Initialize method. It's used for pre-setting a component "state"
   // This will set the state of the game by telling each Square its own state (null, X or O)
@@ -34,9 +34,9 @@ class Board extends React.Component {
   // Event handler -> event = click
   // Will update this.state.squares[i] where "i" is the Square that was clicked
   handleClick(i) {
-    const squares = this.state.squares.slice();
+    const squares = this.state.squares.slice(); // .Slice creates a "private" copy of this.state.square ("Immutability")
     squares[i] = 'X';
-    this.setState({ squares: squares });
+    this.setState({ squares: squares }); // Replace the existing value of this.state.square
     // console.log (this.state.squares)
   }
 
