@@ -20,33 +20,6 @@ function Square(props) {
 
 // Board handles the state of each Square in order to determine a winner.
 class Board extends React.Component {
-
-  // Equivalent to Ruby's Initialize method. It's used for pre-setting a component "state"
-
-  // constructor(props) {
-  //   super(props);
-  //   this.state = {
-  //     squares: Array(9).fill(null),
-  //     xIsNext: true, // Flag to determine which player goes next
-  //   }
-  // }
-
-  // Event handler -> event = click
-  // Will update this.state.squares[i] where "i" is the Square that was clicked
-  // handleClick(i) {
-  //   const squares = this.state.squares.slice(); // .Slice creates a "private" copy of this.state.square ("Immutability")
-  //   // Will ignore re-clicking or stop the game
-  //   if (calculateWinner(squares) || squares[i]) {
-  //     return
-  //   }
-  //   squares[i] = this.state.xIsNext ? 'X' : 'O';
-  //   this.setState({
-  //     squares: squares, // Replace the existing value of this.state.square
-  //     xIsNext: !this.state.xIsNext, // Change the flag's value
-  //   });
-  //   // console.log (this.state.squares)
-  // }
-
   renderSquare(i) {
     // "value" and "onClick" is what's called a "prop" (property)
     // <Square /> refers to the Square component declared above
@@ -89,12 +62,13 @@ class Game extends React.Component {
       history: [{
         squares: Array(9).fill(null),
       }],
-        xIsNext: true,
+        xIsNext: true, // Flag to determine which player goes next
+        stepNumber: 0, // To indicate which step is being displayed
     };
   }
 
   handleClick(i) {
-    const history = this.state.history; // This fetches the game's records
+    const history = this.state.history.slice(0, this.state.stepNumber + 1); // This fetches the game's records
     const current = history[history.length - 1]; // This gets the current state of the game
     const squares = current.squares.slice()
 
@@ -111,13 +85,31 @@ class Game extends React.Component {
         squares: squares,
       }]), // Updates the record of current state of the game
       xIsNext: !this.state.xIsNext, // Change the flag's value
+      stepNumber: history.length,
+    });
+  }
+
+  jumpTo(step) {
+    this.setState ({
+      stepNumber: step,
+      xIsNext: (step % 2) === 0,
     });
   }
 
   render() {
     const history = this.state.history;
-    const current = history[history.length - 1];
+    const current = history[this.state.stepNumber];
     // console.log(this.state.history)
+
+    const moves = history.map((step, move) => {
+      const desc = move ? 'Go to move #' + move : 'Go to game start';
+      return (
+        <li key={ move }>
+          <button onClick={ () => this.jumpTo(move) }>{ desc }</button>
+        </li>
+      )
+    })
+
 
     // Display player's turn or winner
     const winner = calculateWinner(current.squares);
@@ -137,7 +129,7 @@ class Game extends React.Component {
         </div>
         <div className="game-info">
           <div>{ status }</div>
-          <ol>{/* TODO */}</ol>
+          <ol>{ moves }</ol>
         </div>
       </div>
     );
