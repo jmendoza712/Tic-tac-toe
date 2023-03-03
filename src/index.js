@@ -14,7 +14,7 @@ function Square(props) {
       onClick={ props.onClick } // Will tell Board when Square is clicked. This is an "event listener"
       >
         {props.value} {/* Will display the "value" prop passed when Square is rendered */}
-      </button>
+    </button>
   );
 }
 
@@ -22,55 +22,45 @@ function Square(props) {
 class Board extends React.Component {
 
   // Equivalent to Ruby's Initialize method. It's used for pre-setting a component "state"
-  // This will set the state of the game by telling each Square its own state (null, X or O)
-  constructor(props) {
-    super(props);
-    this.state = {
-      squares: Array(9).fill(null),
-      xIsNext: true, // Flag to determine which player goes next
-    }
-  }
+
+  // constructor(props) {
+  //   super(props);
+  //   this.state = {
+  //     squares: Array(9).fill(null),
+  //     xIsNext: true, // Flag to determine which player goes next
+  //   }
+  // }
 
   // Event handler -> event = click
   // Will update this.state.squares[i] where "i" is the Square that was clicked
-  handleClick(i) {
-    const squares = this.state.squares.slice(); // .Slice creates a "private" copy of this.state.square ("Immutability")
-    // Will ignore re-clicking or stop the game
-    if (calculateWinner(squares) || squares[i]) {
-      return
-    }
-    squares[i] = this.state.xIsNext ? 'X' : 'O';
-    this.setState({
-      squares: squares, // Replace the existing value of this.state.square
-      xIsNext: !this.state.xIsNext, // Change the flag's value
-    });
-    // console.log (this.state.squares)
-  }
+  // handleClick(i) {
+  //   const squares = this.state.squares.slice(); // .Slice creates a "private" copy of this.state.square ("Immutability")
+  //   // Will ignore re-clicking or stop the game
+  //   if (calculateWinner(squares) || squares[i]) {
+  //     return
+  //   }
+  //   squares[i] = this.state.xIsNext ? 'X' : 'O';
+  //   this.setState({
+  //     squares: squares, // Replace the existing value of this.state.square
+  //     xIsNext: !this.state.xIsNext, // Change the flag's value
+  //   });
+  //   // console.log (this.state.squares)
+  // }
 
   renderSquare(i) {
     // "value" and "onClick" is what's called a "prop" (property)
     // <Square /> refers to the Square component declared above
     return (
       <Square
-        value={ this.state.squares[i] } // Each Square will receive a value prop that will either be 'X', 'O', or null.
-        onClick = { () => this.handleClick(i) } // "Event handler". Will allow communication btw Board and Square when Square is clicked
+        value={ this.props.squares[i] } // Each Square will receive a value prop that will either be 'X', 'O', or null.
+        onClick = { () => this.props.onClick(i) } // "Event handler". Will allow communication btw Board and Square when Square is clicked
       />
     )
   }
 
   render() {
-    // Display player's turn or winner
-    const winner = calculateWinner(this.state.squares);
-    let status;
-    if (winner) {
-      status = 'Winner: ' + winner;
-    } else {
-      status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
-    }
-
     return (
       <div>
-        <div className="status">{status}</div>
         <div className="board-row">
           {this.renderSquare(0)}
           {this.renderSquare(1)}
@@ -92,14 +82,61 @@ class Board extends React.Component {
 }
 
 class Game extends React.Component {
+  // This will record every move done of the game.
+  constructor(props) {
+    super(props);
+    this.state = {
+      history: [{
+        squares: Array(9).fill(null),
+      }],
+        xIsNext: true,
+    };
+  }
+
+  handleClick(i) {
+    const history = this.state.history; // This fetches the game's records
+    const current = history[history.length - 1]; // This gets the current state of the game
+    const squares = current.squares.slice()
+
+
+    // Will ignore re-clicking or stop the game
+    if (calculateWinner(squares) || squares[i]) {
+      return
+    }
+
+    squares[i] = this.state.xIsNext ? 'X' : 'O';
+    this.setState({
+      // #concat() is a immutable version of #push()
+      history: history.concat([{
+        squares: squares,
+      }]), // Updates the record of current state of the game
+      xIsNext: !this.state.xIsNext, // Change the flag's value
+    });
+  }
+
   render() {
+    const history = this.state.history;
+    const current = history[history.length - 1];
+    // console.log(this.state.history)
+
+    // Display player's turn or winner
+    const winner = calculateWinner(current.squares);
+    let status;
+    if (winner) {
+      status = 'Winner: ' + winner;
+    } else {
+      status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
+    }
+
     return (
       <div className="game">
         <div className="game-board">
-          <Board />
+          <Board
+            squares={ current.squares }
+            onClick={ (i) => this.handleClick(i) }/>
         </div>
         <div className="game-info">
-          <div>{/* status */}</div>
+          <div>{ status }</div>
           <ol>{/* TODO */}</ol>
         </div>
       </div>
